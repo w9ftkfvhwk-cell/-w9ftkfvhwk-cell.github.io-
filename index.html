@@ -15,6 +15,30 @@
 
       // ?dev=1 がある場合は開発者テストモードとしてパスする
       if (dev === '1') return;
+// --- 外部キーボード入力の処理を追加 ---
+window.addEventListener('keydown', (e) => {
+    // ゲームがプレイ中で、アクティブな時だけ反応させる
+    // (※ もし元のコードでこれらの変数が使われていない場合は、このif文は削除しても構いません)
+    if (typeof isQuestionActive === 'undefined' || !isQuestionActive || 
+        typeof gamePlayMode === 'undefined' || gamePlayMode !== 'typing') {
+        return;
+    }
+
+    // Backspaceキーの処理
+    if (e.key === 'Backspace') {
+        e.preventDefault(); // 画面の戻る動作などを防ぐ
+        if (typeof handleCharInput === 'function') {
+            handleCharInput('DEL');
+        }
+    }
+    // アルファベットA-Zの処理 (大文字小文字問わず)
+    else if (/^[a-zA-Z]$/.test(e.key)) {
+        e.preventDefault(); // 予期せぬ動作を防ぐ
+        if (typeof handleCharInput === 'function') {
+            handleCharInput(e.key.toLowerCase()); // 小文字に統一して送信
+        }
+    }
+});
 
       // X (t.co, twitter.com, x.com) からのアクセスか判定
       const isFromX = ref.includes('t.co') || ref.includes('twitter.com') || ref.includes('x.com');
